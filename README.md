@@ -57,3 +57,41 @@ The system separates the write flow from the read flow. The DAW plugin is respon
 3. The backend reads the requested records from the database.
 4. The backend returns normalized response data to the dashboard.
 5. The dashboard renders charts, session history, and practice review information.
+
+## Data Schema
+
+The initial schema focuses on three core records: the recorded voice session, the pitch analysis generated from that session, and the user's practice notes.
+
+### VoiceSession
+
+Represents one vocal practice recording session.
+
+- `id`: Unique session identifier.
+- `songTitle`: Title of the song practiced in the session.
+- `recordedAt`: Date and time when the vocal session was recorded.
+- `durationSec`: Recording duration in seconds.
+- `sourcePluginVersion`: DAW plugin version that generated the session data.
+
+### PitchAnalysis
+
+Represents analysis results produced from a voice session.
+
+- `id`: Unique analysis identifier.
+- `sessionId`: VoiceSession identifier connected to this analysis.
+- `averagePitch`: Average detected pitch for the session.
+- `pitchRange`: Lowest and highest detected pitch values.
+- `timingAccuracy`: Timing accuracy score or summary.
+- `analysisSummary`: Human-readable summary of the analysis result.
+
+### PracticeNote
+
+Represents notes written while reviewing a practice session.
+
+- `id`: Unique note identifier.
+- `sessionId`: VoiceSession identifier connected to this note.
+- `note`: Free-form practice memo.
+- `createdAt`: Date and time when the note was created.
+
+### Version Compatibility
+
+`sourcePluginVersion` allows the backend to handle changes between DAW plugin versions. If an older plugin sends a legacy payload, the backend can apply a compatible parser, migrate the data shape, or reject unsupported versions with a clear error response.
